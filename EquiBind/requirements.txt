@@ -1,0 +1,17 @@
+# python==3.7
+torch==1.10.0
+torchvision
+# cpuonly
+torchaudio
+dgl
+rdkit
+openbabel
+biopython
+biopandas
+pot
+dgllife
+joblib
+pyaml
+icecream
+matplotlib
+tensorboard
