@@ -36,7 +36,8 @@ async def upload_ligand(file: UploadFile = File(...)):
 
 @app.post("/run/")
 async def run():
+    os.system('python inference.py --config=configs_clean/inference.yml')
     #subprocess.run(["python inference.py --config=configs_clean/inference.yml"])
-    inference_main()
+    #inference_main()
     #return FileResponse('data/results/output/')
     return {"Message": "Hello"}
