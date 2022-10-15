@@ -121,7 +121,7 @@ def parse_arguments(arglist = None):
     cmdline_parser.set_defaults(**clear_defaults)
     cmdline_parser._defaults = {}
     cmdline_args = cmdline_parser.parse_args(arglist)
-    
+
     return args, cmdline_args
 
 
@@ -445,7 +445,7 @@ def inference_from_files(args):
     torch.save(results, path)
 
 
-if __name__ == '__main__':
+def inference_main():
     args, cmdline_args = parse_arguments()
 
     if args.config:
