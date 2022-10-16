@@ -5,7 +5,8 @@ import shutil
 import subprocess
 import os
 from inference import *
-
+import io
+from starlette.responses import FileResponse
 app = FastAPI()
 
 @app.post("/files/")
@@ -14,30 +15,36 @@ async def create_file(file: bytes = File()):
 
 @app.post("/uploadprotein/")
 async def upload_protein(file: UploadFile = File(...)):
-    if(not os.path.exists("./data/test")):
-        os.mkdir("./data/test")
+    if(not os.path.exists("./data_run/test")):
+        os.mkdir("./data_run/test")
     extension = file.filename.rsplit('.', 1)[-1]
     if(extension not in ['pdb']):
         return {"Message": "Protein files of format ['pdb'] are allowed."}
-    with open("./data/test/protein."+extension, "wb") as buffer:
+    with open("./data_run/test/protein."+extension, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     return {"Message": "Protein file uploaded successfully."}
 
 @app.post("/uploadligand/")
 async def upload_ligand(file: UploadFile = File(...)):
-    if(not os.path.exists("./data/test")):
-        os.mkdir("./data/test")
+    if(not os.path.exists("./data_run/test")):
+        os.mkdir("./data_run/test")
     extension = file.filename.rsplit('.', 1)[-1]
     if(extension not in ['mol2','sdf','pdbqt','pdb']):
         return {"Message": "Ligand files of format ['mol2','sdf','pdbqt','pdb'] are allowed."}
-    with open("./data/test/ligand."+extension, "wb") as buffer:
+    with open("./data_run/test/ligand."+extension, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     return {"Message": "Ligand file uploaded successfully."}
 
 @app.post("/run/")
 async def run():
     os.system('python inference.py --config=configs_clean/inference.yml')
-    #subprocess.run(["python inference.py --config=configs_clean/inference.yml"])
-    #inference_main()
-    #return FileResponse('data/results/output/')
-    return {"Message": "Hello"}
+
+    file_l = open('/opt/output/test/lig_equibind_corrected.sdf', mode="r")
+    content_l = file_l.read()
+    print(content_l)
+
+    file_p = open('./data_run/test/protein.pdb', mode="r")
+    content_p = file_p.read()
+    print(content_p)
+    # return FileResponse('output/test/lig_equibind_corrected.sdf', mediatype='applicaton/octet-stream', filename='lig_equibind_corrected.sdf')
+    return {"ligand": content_l, "protein": content_p}

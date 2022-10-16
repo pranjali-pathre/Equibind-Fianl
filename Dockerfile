@@ -21,7 +21,7 @@ RUN conda --version
 
 RUN conda create -n equibind python=3.7 -y
 # RUN conda env create -f environment_cpuonly.yml
-COPY EquiBind /opt/
+
 WORKDIR /opt/
 RUN activate equibind
 RUN pip install psutil
@@ -40,10 +40,15 @@ RUN pip install pyaml --no-cache-dir
 RUN pip install icecream --no-cache-dir
 RUN pip install matplotlib --no-cache-dir
 RUN pip install tensorboard --no-cache-dir
+RUN pip install tensorboard --no-cache-dir
 RUN pwd
 COPY openbabel-3.1.1-cp310-cp310-win32.whl /opt/
 RUN ls
 RUN apt-get install openbabel -y
+RUN pip install fastapi --no-cache-dir
+RUN pip install uvicorn --no-cache-dir
+RUN pip install python-multipart
 
-# RUN python inference.py
-# ENTRYPOINT ["python", "/opt/ml/code/train.py"]
+COPY EquiBind /opt/
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "800"]
+# CMD ["uvicorn", "/opt/main:app"]
